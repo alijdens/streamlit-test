@@ -1,0 +1,6 @@
+ipython-sql==0.5.*
+sqlalchemy==2.0.*
+psycopg2==2.9.*
+jupyterlab==4.*
+pandas==2.*
+matplotlib==3.8.*

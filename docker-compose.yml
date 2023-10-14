@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15.4
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: perf_metrics
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./db-init.sql:/docker-entrypoint-initdb.d/db-init.sql
+
+  perf-metrics:
+    build: .
+    ports:
+      - "8501:8501"
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/perf_metrics
+    volumes:
+      - .:/app
+
+  notebooks:
+    build: ./jupyter
+    ports:
+      - "8888:8888"
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/perf_metrics
+      JUPYTER_CONFIG_DIR: /jupyter/config
+      IPYTHONDIR: /jupyter/config/ipython
+
+volumes:
+  postgres-data:
